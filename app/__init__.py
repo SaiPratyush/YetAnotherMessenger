@@ -8,6 +8,11 @@ socketio = SocketIO()
 
 
 def create_app():
+    """Create Flask app and add configurations.
+
+    Returns:
+        flask.app.Flask: Returns Flask app object.
+    """
     from . import events
 
     app = Flask(__name__)
@@ -18,16 +23,5 @@ def create_app():
     app.register_blueprint(gateway_bp)
 
     socketio.init_app(app)
-
+    events.handles_events()
     return app
-
-# @socketio.on('message')
-# def handlemessage(msg):
-#     print("message received: "+str(msg))
-#     emit('message', "{'message':'received message'}")
-
-
-# @socketio.on('notification')
-# def handlenotification(msg):
-#     print("sending notification: "+str(msg))
-#     emit('notification', "{'message':'received notification'}")

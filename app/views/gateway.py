@@ -7,9 +7,10 @@ gateway_bp = Blueprint('gateway', __name__)
 
 @gateway_bp.route('/signup', methods=['POST'])
 def signup():
-    """
-    returns acknowledgement of success or failure of signup
-    :return: json
+    """Return acknowledgement of success or failure of signup.
+
+    Returns:
+        JSON: Returns JSON acknowledgement.
     """
     json = request.get_json()
     print(json)
