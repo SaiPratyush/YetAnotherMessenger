@@ -3,3 +3,9 @@
 
 # Flask Framework
 Flask==1.1.2
+
+# Other Requirements
+flask_socketio
+eventlet
+pymongo
+flask-login
