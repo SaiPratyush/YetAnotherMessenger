@@ -1,12 +1,15 @@
 """User Model."""
 
-from app import bcrypt
+from app import bcrypt, myclient
+
+clients = myclient["Clients"]
+users = clients["users"]
 
 
 class User:
     """User class."""
 
-    def __init__(self, email, password, phone=None,
+    def __init__(self, email, password, username=None, phone=None,
                  devices=None, location=None, authenticated=False,
                  active=False):
         """Intialize user.
@@ -14,6 +17,7 @@ class User:
         Args:
             email (str): Email id of the user
             password (str): User's password
+            username (str, optional): Username. Defaults to None.
             phone (str, optional): Phone number of user. Defaults to None.
             devices (list, optional): List of devices signed in by user.\
                 Defaults to None.
@@ -24,7 +28,8 @@ class User:
             active (bool, optional): Flag for whether the user is active. \
                 Defaults to False.
         """
-        self.email = email
+        self.username = username.strip().lower()
+        self.email = email.strip().lower()
         self.password = bcrypt.generate_password_hash(password)
         self.phone = phone
         self.devices = devices
@@ -41,7 +46,18 @@ class User:
         Returns:
             bool: Returns True if password matches.
         """
-        return bcrypt.check_password_hash(self.password, password)
+        query = {"email": self.email}
+        doc = users.find_one(query)
+        return bcrypt.check_password_hash(doc['password'], password)
+
+    def register_user(self):
+        """Register user."""
+        query = {"email": self.email}
+        doc = users.find_one(query)
+        if doc is not None:
+            return False
+        users.insert_one(self.__dict__)
+        return True
 
     def logout(self):
         """Logout user by setting the authenticated flag False."""
@@ -54,6 +70,14 @@ class User:
             bool: Returns True if active
         """
         return self.active
+
+    def get_username(self):
+        """Return username.
+
+        Returns:
+            str: Username.
+        """
+        return self.email
 
     def get_email(self):
         """Return user email id.
