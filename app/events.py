@@ -1,6 +1,7 @@
 """All SocketIO events used by the sever."""
 from flask_socketio import emit, join_room, leave_room
 from . import socketio
+from .models import user
 
 
 def handles_events():
@@ -76,6 +77,44 @@ def on_incoming_message(data):
     room = data["room"]
     emit('incoming-msg', "{'username': '"+username +
          "','message':'"+msg+"'}", room=room)
+
+
+# Sign up and Login
+
+@socketio.on('signup')
+def on_signup(data):
+    """Register new user.
+
+    Args:
+        data (JSON): Data requested by client as a JSON object.
+    """
+    username = data["username"]
+    email = data["email"]
+    password = data["password"]
+    userid = user.User(email, password, username)
+    success = userid.register_user()
+    message = "User already exists"
+    if(success):
+        print("registered user: "+userid.get_email())
+        message = "User Registered"
+    emit('signup', "{'success': '"+str(success) +
+         "','message':'"+message+"'}")
+
+
+@socketio.on('login')
+def on_login(data):
+    """Login user.
+
+    Args:
+        data (JSON): Data requested by client as a JSON object.
+    """
+    email = data["email"]
+    password = data["password"]
+    userid = user.User(email, password)
+    success = userid.check_password(password)
+    print("login success:"+success+", user: "+userid.get_email())
+    emit('signup', "{'success': '"+success +
+         "','message':'User logged in'}")
 
 
 # Status queries
