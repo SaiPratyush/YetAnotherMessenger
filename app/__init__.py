@@ -3,10 +3,11 @@
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_bcrypt import Bcrypt
-
+import pymongo
 
 socketio = SocketIO()
 bcrypt = Bcrypt()
+myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 
 
 def create_app():
