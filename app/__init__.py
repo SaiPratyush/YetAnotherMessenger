@@ -2,9 +2,11 @@
 
 from flask import Flask
 from flask_socketio import SocketIO
+from flask_bcrypt import Bcrypt
 
 
 socketio = SocketIO()
+bcrypt = Bcrypt()
 
 
 def create_app():
@@ -23,5 +25,6 @@ def create_app():
     app.register_blueprint(gateway_bp)
 
     socketio.init_app(app)
+    bcrypt.init_app(app)
     events.handles_events()
     return app
